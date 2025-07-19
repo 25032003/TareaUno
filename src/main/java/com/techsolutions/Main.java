@@ -25,14 +25,22 @@ public class Main {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        // Mostrar JSON recibido para verificar campos
+
         System.out.println("===== RESPUESTA COMPLETA DEL API GENERADOR =====");
         System.out.println(response.body());
         System.out.println("================================================");
 
         JSONObject json = new JSONObject(response.body());
 
+
         JSONObject resultado = construirResultado(json);
+
+        // Mostrar JSON modificado antes de enviar
+        System.out.println("===== JSON MODIFICADO ENVIADO AL EVALUADOR =====");
+        System.out.println(resultado.toString(4)); // Pretty print con indentación
+        System.out.println("================================================");
+
+
         enviarEvaluacion(resultado, client);
     }
 
@@ -102,7 +110,7 @@ public class Main {
         resumen.put("procesoMasAntiguo", procesoMasAntiguo != null ? procesoMasAntiguo : JSONObject.NULL);
 
         resultado.put("resultadoBusqueda", resumen);
-        resultado.put("payload", jsonCompleto); // JSON completo con "auditor" y "metadata"
+        resultado.put("payload", jsonCompleto); // JSON completo original
 
         return resultado;
     }
@@ -115,7 +123,8 @@ public class Main {
                 .build();
 
         HttpResponse<String> postResponse = client.send(postRequest, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Respuesta del evaluador:");
+        System.out.println("===== RESPUESTA DEL EVALUADOR =====");
         System.out.println(postResponse.body());
+        System.out.println("===================================");
     }
 }
